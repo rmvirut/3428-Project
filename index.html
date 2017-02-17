@@ -19,27 +19,27 @@
 
     </p>
 
-    <script>
-        var x = document.getElementById('main');
+    <!--<script>-->
+        <!--var x = document.getElementById('main');-->
 
-        /*Test for GPS capability*/
-        function getLocation() {
-            if (navigator.geolocation) {
-                alert("it")
-                navigator.geolocation.getCurrentPosition(printLocation);
-                alert(navigator.geolocation.getCurrentPosition());
+        <!--/*Test for GPS capability*/-->
+        <!--function getLocation() {-->
+            <!--if (navigator.geolocation) {-->
+                <!--alert("it")-->
+                <!--navigator.geolocation.getCurrentPosition(printLocation);-->
+                <!--alert(navigator.geolocation.getCurrentPosition());-->
 
-            } else {
-                main.innerHTML("Device does not support this feature.");
-            }
-        }
+            <!--} else {-->
+                <!--main.innerHTML("Device does not support this feature.");-->
+            <!--}-->
+        <!--}-->
 
 
-        function printLocation(position) {
-            x.innerHTML = position.coords.latitude + "  " + position.coords.longitude;
-        }
+        <!--function printLocation(position) {-->
+            <!--x.innerHTML = position.coords.latitude + "  " + position.coords.longitude;-->
+        <!--}-->
 
-    </script>
+    <!--</script>-->
 </body>
 
 </html>
