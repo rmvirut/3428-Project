@@ -1,4 +1,14 @@
 /*Predefined waypoints for the program*/
+
+/*waypoint objects have the format of 
+{
+id: unique id of the location
+name: given name of the location
+coordinates.latitude: latitude of the cordinate
+coordinates.longitude: longitude of the coordinate
+"zoom": the google map zoom level as some locations cannot be seen at certain distance
+}*/
+
 {
     "waypoint": [
         {
