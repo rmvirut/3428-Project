@@ -1,7 +1,6 @@
 {
     "description": {
-        "info": "This file contains the pre-defined waypoint objects are all stored in a waypoints array with"+ 
-        "the format",
+        "info": "This file contains the pre-defined waypoint objects are all stored in a waypoints array with the format",
         "id": "unique id of the location",
         "name": "given name of the location",
         "coord.latitude": "latitude of the cordinate",
