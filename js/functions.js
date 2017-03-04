@@ -11,7 +11,7 @@ function getLocation(address){
         if (status == google.maps.GeocoderStatus.OK) {
             return results[0].geometry.location;
         }
-    })
+    });
 }
 
 
@@ -39,4 +39,32 @@ function placeMarkers(address, map){
 
 }
 
-// navigator.getlocation.getCurrentPosition()
+/**
+ * Tests if the device supports GPS or if it's active
+ * @returns True if the device supports
+ */
+function testDevice(){
+    if(navigator.geolocation){
+        console.log("Device GPS active");
+        return true;
+    } else {
+        console.log("Device GPS inacttive");
+        return false;
+    }
+}
+
+/**
+ * 
+ * @param {*} errorMessage the error message you want to print to the screen.
+ * Can be a string or an Error object
+ */
+function errorPrint(errorMessage){
+    if(typeof(errorMessage)=="String"){
+        console.log(errorMessage);
+        var main = document.getElementById("main");
+        main.innerHTML(errorMessage);
+    } else {
+        console.log(errorMessage.message);
+        var main = document.getElementById("main");
+    }
+}
