@@ -30,12 +30,13 @@ function setMarker(LatLng, name, mapVar){
 }
 
 /**
- *
- * @param address
- * @param map
+ * Function places a balloon/marker in the page map.
+ * @param address - location address as a street address in String format
+ * @param map - the google map object on the page
  */
 function placeMarkers(address, map){
-    var geCode = new google.maps.Geocoder();
+    var geoCode = new google.maps.Geocoder();
+    //function incomplete
 
 }
 
@@ -45,10 +46,11 @@ function placeMarkers(address, map){
  */
 function testDevice(){
     if(navigator.geolocation){
-        console.log("Device GPS active");
+        console.log("Device GPS active. Returned value true");
         return true;
     } else {
-        console.log("Device GPS inacttive");
+        console.log("Device is not supported or GPS feature is disabled\n"
+        + "Please enable and refresh the page");
         return false;
     }
 }
@@ -56,15 +58,19 @@ function testDevice(){
 /**
  * 
  * @param {*} errorMessage the error message you want to print to the screen.
- * Can be a string or an Error object
+ * 
  */
 function errorPrint(errorMessage){
-    if(typeof(errorMessage)=="String"){
         console.log(errorMessage);
-        var main = document.getElementById("main");
+        var main = document.getElementById("errorPar");
         main.innerHTML(errorMessage);
-    } else {
-        console.log(errorMessage.message);
-        var main = document.getElementById("main");
-    }
+}
+
+/**
+ * 
+ * @param {*} errorObject 
+ */
+function errorHandler(errorObject){
+    console.log(errorObject.message);
+    alert(errorObject.message);
 }
