@@ -1,1 +1,0 @@
-navigator.getlocation.getCurrentPosition(alert);
