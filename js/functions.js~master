@@ -1,5 +1,3 @@
-/*This file is intended primarily for the functions that the program may or may not use. It it
-* designed to allow for further extension (see what I did there) and as much code re-us as possible*/
 /*Functions*/
 
 /**
