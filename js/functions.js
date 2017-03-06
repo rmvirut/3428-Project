@@ -76,3 +76,19 @@ function errorHandler(errorObject){
     console.log(errorObject.message);
     alert(errorObject.message);
 }
+
+
+/**
+* Function for loading waypoints into a JSON array
+* @param url - url of the json file containing the waypoints
+* @returns - json object containing the waypoints
+*/
+function getWaypoints(url){
+    var waypoints
+    $.getJSON(url, function(data) {
+    console.log(data);
+    waypoints = data; // this will show the info it in firebug console
+    });
+    
+    return waypoints
+}
