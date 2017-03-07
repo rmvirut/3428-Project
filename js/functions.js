@@ -1,6 +1,5 @@
 /*This file is intended primarily for the functions that the program may or may not use. It it
-* designed to allow for further extension (see what I did there) and as much code re-us as possible*/
-/*Functions*/
+* designed to allow for further extension (see what I did there) and as much code re-use as possible*/
 
 /**
  * Returns the coordintes of a street address passed to it
@@ -9,7 +8,7 @@
  */
 function getLocation(address){
     var geo = new google.maps.Geocoder();
-    geo.geocoder({'address': address}, funtion(results, status){
+    geo.geocoder({'address': address}, function(results, status){
         if (status == google.maps.GeocoderStatus.OK) {
             return results[0].geometry.location;
         }
