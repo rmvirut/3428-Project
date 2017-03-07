@@ -1,6 +1,5 @@
 /*This file is intended primarily for the functions that the program may or may not use. It it
-* designed to allow for further extension (see what I did there) and as much code re-us as possible*/
-/*Functions*/
+* designed to allow for further extension (see what I did there) and as much code re-use as possible*/
 
 /**
  * Returns the coordintes of a street address passed to it
@@ -9,10 +8,22 @@
  */
 function getLocation(address){
     var geo = new google.maps.Geocoder();
-    geo.geocoder({'address': address}, funtion(results, status){
+    geo.geocoder({'address': address}, function(results, status){
         if (status == google.maps.GeocoderStatus.OK) {
             return results[0].geometry.location;
         }
+    });
+}
+
+/**
+ * Function creates a navigator.geolocation object and obtains the devices location using getCurrentPosition
+ * @returns returns the latitude and longitude positions of an object as an array
+ */
+function getDeviceLocation(){
+    geo = navigator.geolocation; //create geolocation object
+    geo.getCurrentPosition(function(pos){
+        console.log(pos.coords.toString());
+        return pos.coords.LatLng;
     });
 }
 
@@ -84,10 +95,26 @@ function errorHandler(errorObject){
 * @returns - json object containing the waypoints
 */
 function getWaypoints(url){
-    var waypoints
-    $.getJSON(url, function(data) {
-    console.log(data);
-    waypoints = data; // this will show the info it in firebug console
+    var waypoints;
+    // $.getJSON(url, function(data) {
+    // console.log(data);
+    // waypoints = data; // this will show the info it in firebug console
+    // });
+    //trying with ajax request and jsonp
+
+    /*This jQuery method use jsonp instead of XMLHttpRequest to bypass the cross-origin policy
+    for more information on this see https://www.w3schools.com/js/js_json_jsonp.asp and 
+    http://stackoverflow.com/questions/2067472/what-is-jsonp-all-about
+    http://stackoverflow.com/questions/3839966/can-anyone-explain-what-jsonp-is-in-layman-terms
+    */
+    $.ajax({
+        url: url,
+        dataType: 'jsonp',
+        success: function(data) {
+            waypoints = data;
+            console.log(date);
+            console.log(waypoints);
+        }
     });
     
     return waypoints
