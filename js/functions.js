@@ -153,3 +153,14 @@ function getCurrentLocation() {
 var distance = function(){
     return google.maps.geometry.spherical.computeDistanceBetween(lastPos, currentPos);
 }
+
+function jsonCallback(json){
+   var waypoints = json.waypoints;
+}
+
+function getWaypoints(my_url){
+    $.ajax({
+        url: my_url,
+        dataType: "jsonp"
+    });
+}
