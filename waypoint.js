@@ -9,7 +9,7 @@
 var waypointsArr = [
     {
         name: "Loyola Tim Hortons",
-        url: "smu.ca",
+        url: "http://www.timhortons.com/ca/en/locations/get-directions.php?id=101519&utm_source=Google&utm_medium=Local&utm_term=NS&utm_content=Halifax&utm_campaign=Local_Search",
         coords: {
             lat: 44.6306092,
             lng: -63.5808635
@@ -18,7 +18,7 @@ var waypointsArr = [
     },
     {
         name: "St Mary's University Arena",
-        url: "smu.ca",
+        url: "http://www.smuhuskies.ca/sports/mice/index",
         coords: {
             lat: 44.6315522,
             lng: -63.5790449
@@ -27,7 +27,7 @@ var waypointsArr = [
     },
     {
         name: "Student Union Building",
-        url: "smu.ca",
+        url: "https://smusa.ca/",
         coords: {
             lat: 44.6314987,
             lng: -63.5809118
@@ -36,7 +36,7 @@ var waypointsArr = [
     },
     {
         name: "My house",
-        url: "http://smu.ca",
+        url: "http://smu.ca/campus-life/smufit-homburg-centre.html",
         coords: {
             lat: 44.647917299999996,
             lng: -63.6013177

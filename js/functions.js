@@ -6,8 +6,7 @@ var currentPos = {
 }; //device's current location as a LatLgn object. Updates every 30secs
 var lastPos = {
     lat: "",
-    lng: "",
-    url: "optional"
+    lng: ""
 }; //last know coordinates
 var accuracy;
 //var map = new google.map();
@@ -32,19 +31,29 @@ function main() {
 
         lastPos.lat = waypointsArr[index].coords.lat;
         lastPos.lng = waypointsArr[index].coords.lng;
-        lastPos.url = waypointsArr[index].url;
 
         $(siteLoader).empty(); //remove current content
-        var embed = "<object data= " + lastPos.url + " frameborder='0'" +
-            " style='overflow: hidden; height: 100%; width: 100%; position: absolute;' height='100%' width='100%'></object>";
-        $(siteLoader).html(embed);
-    } else {
 
+        //create a new embod object with the location's url
+        var embed = "<object data= " + waypointsArr[index].url + " frameborder='0'" +
+            " style='overflow: hidden; height: 100%; width: 100%; position: absolute;' height='100%' width='100%'></object>";
+        //insert into the page
+        $(siteLoader).html(embed);
+    } else {//if the location is not know
+        //not the current location
+        lastPos.lat = currentPos.lat;
+        lastPos.lng = currentPos.lng;
+
+        initMap();
     }
 
 
 }
 
+/**
+ * Reports the current state of global variables and other system runtime values. Can be modified to report
+ * more
+ */
 function report() {
     console.log("Current position is lat: " + currentPos.lat + " and " + " lng: " + currentPos.lng + "\n" +
         "Current position is lat: " + lastPos.lat + " and " + " lng: " + lastPos.lng + "\n" +
@@ -52,52 +61,26 @@ function report() {
     );
 }
 
+function initMap() {
+    $(siteLooader).empty();//clear the site loader if current content
+    var mapBox = $(siteLoader).add('div');//create map container
+    mapBox.setAttribute("height", "500px");
+    mapBox.setAttribute("width", "100%");
+    mapBox.setAttribute("id", "googleMap");
 
-//deprecated
-/**
- * Returns the coordintes of a street address passed to it
- * @param streetAddress: street address of a specified location that is recognized on google maps. Must be in the format
- * /[streetNumber][Street Name],[City],[Region][Postal Code]?/
- * @returns returns the first location object in an array of results. This is often the location closest to the device
- */
-function getLocation(streetAddress) {
-    var LatLng;
-    var geocoderRequest = {
-        'address': streetAddress,
+    var mapOptions = {
+        zoom: 15,
+        center: lastPos
     }
 
-    var geocoder = new google.maps.Geocoder();
-    geo.geocode(geocoderRequest.address, function (results, status) {
-        if (status = 'OK') {
-            LatLng = results[0].geometry.location
-        }
-    })
-}
+    //now insert the map
+    var map = new google.maps.Map(mapBox, mapOptions);
 
-
-/**
- * Accepts coordinates of a location and places it's marker on the map with name
- * @param LatLng: location coordinates in the form of Longitude and Latitude
- * @param name:  Name of the location marked down
- * @param mapVar: Initialized google maps object
- */
-function setMarker(LatLng, name, mapVar) {
+    //create a marker for the object (remember to add custom icon later)
     var marker = new google.maps.Marker({
-        map: mapVar,
-        position: LatLng,
-        title: name
+        position: lastPos,
+        map: map
     });
-}
-
-/**
- * Function places a balloon/marker in the page map.
- * @param address - location address as a street address in String format
- * @param map - the google map object on the page
- */
-function placeMarkers(address, map) {
-    var geoCode = new google.maps.Geocoder();
-    //function incomplete
-
 }
 
 /**
@@ -161,4 +144,12 @@ function getCurrentLocation() {
         currentPos.lng = data.coords.longitude;
         accuracy = data.coords.accuracy;
     });
+}
+
+/**
+ * Uses the haversine formula to calculate distance between two points on the earth's surface
+ * read more: http://www.movable-type.co.uk/scripts/latlong.html
+ */
+var distance = function(){
+    return google.maps.geometry.spherical.computeDistanceBetween(lastPos, currentPos);
 }
