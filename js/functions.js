@@ -80,6 +80,20 @@ function initMap() {
         position: lastPos,
         map: map
     });
+    
+    var mark;
+
+    //Show markers for each waypoint
+    for(i = 0; i < waypointsArr.length; i++)
+    {
+        var pos = new google.maps.LatLng(waypointsArr[i].coords.lat, waypointsArr[i].coords.lng);
+        mark = new google.maps.Marker({
+            position: pos,
+            map: map,
+            title: waypointsArr[i].name,
+            icon: "./icon.png"
+        });
+    }
 }
 
 /**
