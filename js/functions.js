@@ -62,7 +62,7 @@ function report() {
 }
 
 function initMap() {
-    $(siteLooader).empty();//clear the site loader if current content
+    $(siteLoader).empty();//clear the site loader if current content
     var mapBox = $(siteLoader).add('div');//create map container
     mapBox.setAttribute("height", "500px");
     mapBox.setAttribute("width", "100%");
