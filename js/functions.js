@@ -58,7 +58,7 @@ function main() {
 function report() {
     console.log("Current position is lat: " + currentPos.lat + " and " + " lng: " + currentPos.lng + "\n" +
         "Current position is lat: " + lastPos.lat + " and " + " lng: " + lastPos.lng + "\n" +
-        "Accuracy is: " + accuracy
+        "Accuracy is: " + accuracy + "\n"+ "Distance: " + getDistance(currentPos, lastPos)
     );
 }
 
@@ -149,6 +149,37 @@ function getCurrentLocation() {
  * Uses the haversine formula to calculate distance between two points on the earth's surface
  * read more: http://www.movable-type.co.uk/scripts/latlong.html
  */
-var distance = function () {
-    return google.maps.geometry.spherical.computeDistanceBetween(lastPos, currentPos);
+var distance = getDistance(currentPos, lastPos);
+
+/**
+Finds distance between two points, using the haversine formula
+If lPos is not initialized, cPos will be used in its place.
+
+Params:
+cPos - an object with lat and lng fields
+lPos - an object with lat and lng fields
+
+Pre-conditions: cPos and lPos must be objects with lat and lng fields. 
+These fields must be valid latitude and longitude values.
+
+Post-conditions: the distance between cPos and lPos is returned
+
+Returns: the distance, in metres, between cPos and lPos
+*/
+function getDistance(cPos, lPos)
+{
+    //Convert cPos to a LatLng object
+    cur = new google.maps.LatLng(cPos.lat, cPos.lng);
+
+    //if lPos does not exist, use cPos to convert to a LatLng object
+    if (lPos.lat || lPos.lng)
+    {
+        last = new google.maps.LatLng(lPos.lat, lPos.lng);
+    }
+    else
+    {
+        last = new google.maps.LatLng(cPos.lat, cPos.lng);
+    }
+
+    return google.maps.geometry.spherical.computeDistanceBetween(last, cur);
 }
