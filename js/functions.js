@@ -44,6 +44,7 @@ function main() {
         lastPos.lat = currentPos.lat;
         lastPos.lng = currentPos.lng;
 
+        $(siteLoader).empty();//clear the site loader if current content
         initMap();
     }
 
@@ -62,15 +63,13 @@ function report() {
 }
 
 function initMap() {
-    $(siteLoader).empty();//clear the site loader if current content
-    var mapBox = $(siteLoader).add('div');//create map container
-    mapBox.setAttribute("height", "500px");
-    mapBox.setAttribute("width", "100%");
-    mapBox.setAttribute("id", "googleMap");
+    $(siteLoader).html("<div id='mapBox'></div>");//create map container
+    var mapBox = document.getElementById("mapBox");
+    //mapBox.setAttribute("id", "googleMap");
 
     var mapOptions = {
-        zoom: 15,
-        center: lastPos
+        zoom: 17,
+        center: {lat: lastPos.lat, lng: lastPos.lng}
     }
 
     //now insert the map
@@ -150,6 +149,6 @@ function getCurrentLocation() {
  * Uses the haversine formula to calculate distance between two points on the earth's surface
  * read more: http://www.movable-type.co.uk/scripts/latlong.html
  */
-var distance = function(){
+var distance = function () {
     return google.maps.geometry.spherical.computeDistanceBetween(lastPos, currentPos);
 }
