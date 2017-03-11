@@ -83,32 +83,27 @@ function initMap() {
 }
 
 /**
- * Tests if the device supports GPS or if it's active
+ * Tests if the device supports GPS or if it's active and also tests for an active connection
  * @returns True if the device supports
  */
 function testDevice() {
-    if (navigator.geolocation) {
-        console.log("Device GPS active.");
+    if (navigator.geolocation && navigator.onLine) {
+        console.log("Device GPS active and connected to a network");
         navigator.geolocation.getCurrentPosition(function (data) {
             accuracy = data.coords.accuracy;
+            currentPos.lat = data.coords.lat;
+            currentPos.lng = data.coords.lng;
         });
-        return true;
     } else {
+        /*Throws error on fail no GPS device available*/
         console.log("Device is not supported or GPS feature is disabled\n" +
             "Please enable and refresh the page");
+        var error = new Error("Device is not supported or GPS feature is disabled\n" +
+            "Please enable and refresh the page");
+        errorHandler(error);
         return false;
     }
-}
 
-/**
- *
- * @param {*} errorMessage the error message you want to print to the screen.
- *
- */
-function errorPrint(errorMessage) {
-    console.log(errorMessage);
-    var main = document.getElementById("errorPar");
-    main.innerHTML(errorMessage);
 }
 
 /**
@@ -117,6 +112,8 @@ function errorPrint(errorMessage) {
  */
 function errorHandler(errorObject) {
     console.log(errorObject.message);
+
+    /*open dialogue box and present modal with the error message of any possible kind*/
     alert(errorObject.message);
 }
 
