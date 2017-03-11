@@ -20,8 +20,8 @@ var waypointsArr = [
         name: "St Mary's University Arena",
         url: "http://www.smuhuskies.ca/sports/mice/index",
         coords: {
-            lat: 44.6315522,
-            lng: -63.5790449
+            lat: 44.632015,
+            lng: -63.580677
         },
         zoom: 17
     },

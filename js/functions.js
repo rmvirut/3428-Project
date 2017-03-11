@@ -59,7 +59,7 @@ function main() {
 function report() {
     console.log("Current position is lat: " + currentPos.lat + " and " + " lng: " + currentPos.lng + "\n" +
         "Last position is lat: " + lastPos.lat + " and " + " lng: " + lastPos.lng + "\n" +
-        "Accuracy is: " + accuracy + "\n"+ "Distance: " + getDistance(currentPos, lastPos)
+        "Accuracy is: " + accuracy + "\n" + "Distance: " + getDistance(currentPos, lastPos)
     );
 }
 
@@ -81,6 +81,19 @@ function initMap() {
         position: lastPos,
         map: map
     });
+
+    var mark;
+
+    //Show markers for each waypoint
+    for (i = 0; i < waypointsArr.length; i++) {
+        var pos = new google.maps.LatLng(waypointsArr[i].coords.lat, waypointsArr[i].coords.lng);
+        mark = new google.maps.Marker({
+            position: pos,
+            map: map,
+            title: waypointsArr[i].name,
+            icon: "./icon.png"
+        });
+    }
 }
 
 /**
@@ -114,8 +127,9 @@ function testDevice() {
  */
 function errorHandler(errorObject) {
     console.log(errorObject.message);
-
-    /*open dialogue box and present modal with the error message of any possible kind*/
+    /**
+     *
+     */
     alert(errorObject.message);
 }
 
@@ -128,6 +142,12 @@ function isPredefined() {
         if (waypointsArr[i].coords.lat == currentPos.lat && waypointsArr[i].coords.lng == currentPos.lng) {
             return i
         }
+
+        /**
+         * if the distance is <= 60 of a waypoint, return the closest waypoint by setting i to the value
+         *
+         */
+    /
     }
     return -1;
 }
@@ -145,34 +165,29 @@ function getCurrentLocation() {
 }
 
 /**
-Finds distance between two points, using the google geometry library
+ Finds distance between two points, using the google geometry library
  If lPos is not initialized, cPos will be used in its place.
 
-Params:
-cPos - an object with lat and lng fields
-lPos - an object with lat and lng fields
+ Params:
+ cPos - an object with lat and lng fields
+ lPos - an object with lat and lng fields
 
-Pre-conditions: cPos and lPos must be objects with lat and lng fields. 
-These fields must be valid latitude and longitude values.
+ Pre-conditions: cPos and lPos must be objects with lat and lng fields.
+ These fields must be valid latitude and longitude values.
 
-Post-conditions: the distance between cPos and lPos is returned
+ Post-conditions: the distance between cPos and lPos is returned
 
-Returns: the distance, in metres, between cPos and lPos
-*/
-function getDistance(cPos, lPos)
-{
+ Returns: the distance, in metres, between cPos and lPos
+ */
+function getDistance(cPos, lPos) {
     //Convert cPos to a LatLng object
     cur = new google.maps.LatLng(cPos.lat, cPos.lng);
-
     //if lPos does not exist, use cPos to convert to a LatLng object
-    if (lPos.lat || lPos.lng)
-    {
+    if (lPos.lat || lPos.lng) {
         last = new google.maps.LatLng(lPos.lat, lPos.lng);
     }
-    else
-    {
+    else {
         last = new google.maps.LatLng(cPos.lat, cPos.lng);
     }
-
     return google.maps.geometry.spherical.computeDistanceBetween(last, cur);
 }
