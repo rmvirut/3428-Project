@@ -1,121 +1,155 @@
 /*This file is intended primarily for the functions that the program may or may not use. It it
-* designed to allow for further extension (see what I did there) and as much code re-use as possible*/
+ * designed to allow for further extension (see what I did there) and as much code re-use as possible*/
+var currentPos = {
+    lat: "",
+    lng: ""
+}; //device's current location as a LatLgn object. Updates every 30secs
+var lastPos = {
+    lat: "",
+    lng: ""
+}; //last know coordinates
+var accuracy;
+//var map = new google.map();
+var siteLoader = document.getElementById("siteLoader");
+var countTime = 0;
 
 /**
- * Returns the coordintes of a street address passed to it
- * @param address: street address of a specified location that is recognized on google maps
- * @returns returns the first location object in an array of results. This is often the location closest to the device
+ * Java still lives!!! say hello to the main method
  */
-function getLocation(address){
-    var geo = new google.maps.Geocoder();
-    geo.geocoder({'address': address}, function(results, status){
-        if (status == google.maps.GeocoderStatus.OK) {
-            return results[0].geometry.location;
-        }
-    });
+function main() {
+    getCurrentLocation();
+    console.log(countTime + "s");
+    report();
+    countTime += 30;
+
+    //wait two seconds before checking due to asynchronous processing
+    var index = isPredefined();
+    console.log(index);
+
+    if (index >= 0) { //if true then it's a waypoint
+        console.log(index);
+
+        lastPos.lat = waypointsArr[index].coords.lat;
+        lastPos.lng = waypointsArr[index].coords.lng;
+
+        $(siteLoader).empty(); //remove current content
+
+        //create a new embod object with the location's url
+        var embed = "<object data= " + waypointsArr[index].url + " frameborder='0'" +
+            " style='overflow: hidden; height: 100%; width: 100%; position: absolute;' height='100%' width='100%'></object>";
+        //insert into the page
+        $(siteLoader).html(embed);
+    } else {//if the location is not know
+        //not the current location
+        lastPos.lat = currentPos.lat;
+        lastPos.lng = currentPos.lng;
+
+        initMap();
+    }
+
+
 }
 
 /**
- * Function creates a navigator.geolocation object and obtains the devices location using getCurrentPosition
- * @returns returns the latitude and longitude positions of an object as an array
+ * Reports the current state of global variables and other system runtime values. Can be modified to report
+ * more
  */
-function getDeviceLocation(){
-    geo = navigator.geolocation; //create geolocation object
-    geo.getCurrentPosition(function(pos){
-        console.log(pos.coords.toString());
-        return pos.coords.LatLng;
-    });
+function report() {
+    console.log("Current position is lat: " + currentPos.lat + " and " + " lng: " + currentPos.lng + "\n" +
+        "Current position is lat: " + lastPos.lat + " and " + " lng: " + lastPos.lng + "\n" +
+        "Accuracy is: " + accuracy
+    );
 }
 
+function initMap() {
+    $(siteLooader).empty();//clear the site loader if current content
+    var mapBox = $(siteLoader).add('div');//create map container
+    mapBox.setAttribute("height", "500px");
+    mapBox.setAttribute("width", "100%");
+    mapBox.setAttribute("id", "googleMap");
 
-/**
- * Accepts coordinates of a location and places it's marker on the map with name
- * @param LatLng: location coordinates in the form of Longitude and Latitude
- * @param name:  Name of the location marked down
- * @param mapVar: Initialized google maps object
- */
-function setMarker(LatLng, name, mapVar){
+    var mapOptions = {
+        zoom: 15,
+        center: lastPos
+    }
+
+    //now insert the map
+    var map = new google.maps.Map(mapBox, mapOptions);
+
+    //create a marker for the object (remember to add custom icon later)
     var marker = new google.maps.Marker({
-        map: mapVar,
-        position: LatLng,
-        title: name
+        position: lastPos,
+        map: map
     });
-}
-
-/**
- * Function places a balloon/marker in the page map.
- * @param address - location address as a street address in String format
- * @param map - the google map object on the page
- */
-function placeMarkers(address, map){
-    var geoCode = new google.maps.Geocoder();
-    //function incomplete
-
 }
 
 /**
  * Tests if the device supports GPS or if it's active
  * @returns True if the device supports
  */
-function testDevice(){
-    if(navigator.geolocation){
-        console.log("Device GPS active. Returned value true");
+function testDevice() {
+    if (navigator.geolocation) {
+        console.log("Device GPS active.");
+        navigator.geolocation.getCurrentPosition(function (data) {
+            accuracy = data.coords.accuracy;
+        });
         return true;
     } else {
-        console.log("Device is not supported or GPS feature is disabled\n"
-        + "Please enable and refresh the page");
+        console.log("Device is not supported or GPS feature is disabled\n" +
+            "Please enable and refresh the page");
         return false;
     }
 }
 
 /**
- * 
+ *
  * @param {*} errorMessage the error message you want to print to the screen.
- * 
+ *
  */
-function errorPrint(errorMessage){
-        console.log(errorMessage);
-        var main = document.getElementById("errorPar");
-        main.innerHTML(errorMessage);
+function errorPrint(errorMessage) {
+    console.log(errorMessage);
+    var main = document.getElementById("errorPar");
+    main.innerHTML(errorMessage);
 }
 
 /**
- * 
- * @param {*} errorObject 
+ *
+ * @param {*} errorObject
  */
-function errorHandler(errorObject){
+function errorHandler(errorObject) {
     console.log(errorObject.message);
     alert(errorObject.message);
 }
 
+/**
+ *
+ * @returns return >= 0 if current location is a waypoint, -1 otherwise
+ */
+function isPredefined() {
+    for (var i = 0; i < waypointsArr.length; i++) {
+        if (waypointsArr[i].coords.lat == currentPos.lat && waypointsArr[i].coords.lng == currentPos.lng) {
+            return i
+        }
+    }
+    return -1;
+}
 
 /**
-* Function for loading waypoints into a JSON array
-* @param url - url of the json file containing the waypoints
-* @returns - json object containing the waypoints
-*/
-function getWaypoints(url){
-    var waypoints;
-    // $.getJSON(url, function(data) {
-    // console.log(data);
-    // waypoints = data; // this will show the info it in firebug console
-    // });
-    //trying with ajax request and jsonp
-
-    /*This jQuery method use jsonp instead of XMLHttpRequest to bypass the cross-origin policy
-    for more information on this see https://www.w3schools.com/js/js_json_jsonp.asp and 
-    http://stackoverflow.com/questions/2067472/what-is-jsonp-all-about
-    http://stackoverflow.com/questions/3839966/can-anyone-explain-what-jsonp-is-in-layman-terms
-    */
-    $.ajax({
-        url: url,
-        dataType: 'jsonp',
-        success: function(data) {
-            waypoints = data;
-            console.log(date);
-            console.log(waypoints);
-        }
+ * Function creates a navigator.geolocation object and obtains the devices location using getCurrentPosition
+ * @returns returns the latitude and longitude positions of an object as an array
+ */
+function getCurrentLocation() {
+    navigator.geolocation.getCurrentPosition(function (data) {
+        currentPos.lat = data.coords.latitude;
+        currentPos.lng = data.coords.longitude;
+        accuracy = data.coords.accuracy;
     });
-    
-    return waypoints
+}
+
+/**
+ * Uses the haversine formula to calculate distance between two points on the earth's surface
+ * read more: http://www.movable-type.co.uk/scripts/latlong.html
+ */
+var distance = function(){
+    return google.maps.geometry.spherical.computeDistanceBetween(lastPos, currentPos);
 }
