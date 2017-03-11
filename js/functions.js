@@ -12,6 +12,7 @@ var accuracy;
 //var map = new google.map();
 var siteLoader = document.getElementById("siteLoader");
 var countTime = 0;
+var distance = getDistance(currentPos, lastPos);
 
 /**
  * Java still lives!!! say hello to the main method
@@ -57,7 +58,7 @@ function main() {
  */
 function report() {
     console.log("Current position is lat: " + currentPos.lat + " and " + " lng: " + currentPos.lng + "\n" +
-        "Current position is lat: " + lastPos.lat + " and " + " lng: " + lastPos.lng + "\n" +
+        "Last position is lat: " + lastPos.lat + " and " + " lng: " + lastPos.lng + "\n" +
         "Accuracy is: " + accuracy + "\n"+ "Distance: " + getDistance(currentPos, lastPos)
     );
 }
@@ -97,32 +98,28 @@ function initMap() {
 }
 
 /**
- * Tests if the device supports GPS or if it's active
+ * Tests if the device supports GPS or if it's active and also tests for an active connection
  * @returns True if the device supports
  */
 function testDevice() {
-    if (navigator.geolocation) {
-        console.log("Device GPS active.");
+    if (navigator.geolocation && navigator.onLine) {
+        console.log("Device GPS active and connected to a network");
         navigator.geolocation.getCurrentPosition(function (data) {
             accuracy = data.coords.accuracy;
+            currentPos.lat = data.coords.lat;
+            currentPos.lng = data.coords.lng;
         });
-        return true;
     } else {
+        /*Throws error on fail no GPS device available*/
         console.log("Device is not supported or GPS feature is disabled\n" +
             "Please enable and refresh the page");
+        var error = new Error("Device is not supported or GPS feature is disabled\n" +
+            "Please enable and refresh the page");
+        error.name = "connectivity";
+        errorHandler(error);
         return false;
     }
-}
 
-/**
- *
- * @param {*} errorMessage the error message you want to print to the screen.
- *
- */
-function errorPrint(errorMessage) {
-    console.log(errorMessage);
-    var main = document.getElementById("errorPar");
-    main.innerHTML(errorMessage);
 }
 
 /**
@@ -131,6 +128,8 @@ function errorPrint(errorMessage) {
  */
 function errorHandler(errorObject) {
     console.log(errorObject.message);
+
+    /*open dialogue box and present modal with the error message of any possible kind*/
     alert(errorObject.message);
 }
 
@@ -160,14 +159,8 @@ function getCurrentLocation() {
 }
 
 /**
- * Uses the haversine formula to calculate distance between two points on the earth's surface
- * read more: http://www.movable-type.co.uk/scripts/latlong.html
- */
-var distance = getDistance(currentPos, lastPos);
-
-/**
-Finds distance between two points, using the haversine formula
-If lPos is not initialized, cPos will be used in its place.
+Finds distance between two points, using the google geometry library
+ If lPos is not initialized, cPos will be used in its place.
 
 Params:
 cPos - an object with lat and lng fields

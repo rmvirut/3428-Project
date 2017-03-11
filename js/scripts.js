@@ -1,9 +1,5 @@
-
-
-
 //on start check for GPS availability
 testDevice();
-
 getCurrentLocation();
 setInterval(function () {
     main()
