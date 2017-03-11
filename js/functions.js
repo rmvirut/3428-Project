@@ -147,7 +147,7 @@ function isPredefined() {
          * if the distance is <= 60 of a waypoint, return the closest waypoint by setting i to the value
          *
          */
-    /
+    
     }
     return -1;
 }
