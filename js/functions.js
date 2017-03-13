@@ -135,7 +135,8 @@ function errorHandler(errorObject) {
     /**
      *code to create and active modal with the error message
      */
-    alert(errorObject.message);
+    alert(errorObject.name + "\n\n" +
+    errorObject.message);
 }
 
 /**
