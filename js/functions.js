@@ -164,8 +164,6 @@ function isPredefined() {
             index = i;
         }
 
-    }
-
     return index;
 }
 
