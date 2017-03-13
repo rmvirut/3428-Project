@@ -25,30 +25,32 @@ function main() {
 
     //wait two seconds before checking due to asynchronous processing
     var index = isPredefined();
-    console.log(index);
-
-    if (index >= 0) { //if true then it's a waypoint
-        console.log(index);
+    console.log("Index: " + index);
+    if (index >= 0) { //if true then current position is a waypoint
 
         lastPos.lat = waypointsArr[index].coords.lat;
         lastPos.lng = waypointsArr[index].coords.lng;
 
-        $(siteLoader).empty(); //remove current content
+        $(siteLoader).empty(); //remove current content of siteloader
 
-        //create a new embod object with the location's url
+        //create a new embed object with the location's url
         var embed = "<object data= " + waypointsArr[index].url + " frameborder='0'" +
             " style='overflow: hidden; height: 100%; width: 100%; position: absolute;' height='100%' width='100%'></object>";
         //insert into the page
         $(siteLoader).html(embed);
-    } else {//if the location is not know
-        //not the current location
-        lastPos.lat = currentPos.lat;
-        lastPos.lng = currentPos.lng;
+    } else {
 
-        $(siteLoader).empty();//clear the site loader if current content
-        initMap();
+        //if the program is just starting (last position is unknown) or the new position is +60m from the last, update the program
+        if(Math.round(getDistance(lastPos, currentPos)) > 60){
+            //update the current location to the current
+            lastPos.lat = currentPos.lat;
+            lastPos.lng = currentPos.lng;
+            //clear the siteloader and load the new google maps object
+            $(siteLoader).empty();
+            initMap();
+        }
+
     }
-
 
 }
 
@@ -63,6 +65,9 @@ function report() {
     );
 }
 
+/**
+ * create new google maps object and inserts into the page. Centered on the last known position
+ */
 function initMap() {
     $(siteLoader).html("<div id='mapBox'></div>");//create map container
     var mapBox = document.getElementById("mapBox");
@@ -76,7 +81,7 @@ function initMap() {
     //now insert the map
     var map = new google.maps.Map(mapBox, mapOptions);
 
-    //create a marker for the object (remember to add custom icon later)
+    //create a marker for the object
     var marker = new google.maps.Marker({
         position: lastPos,
         map: map
@@ -84,7 +89,7 @@ function initMap() {
 
     var mark;
 
-    //Show markers for each waypoint
+    //Show markers for each waypoint using custom markers
     for (i = 0; i < waypointsArr.length; i++) {
         var pos = new google.maps.LatLng(waypointsArr[i].coords.lat, waypointsArr[i].coords.lng);
         mark = new google.maps.Marker({
@@ -128,7 +133,7 @@ function testDevice() {
 function errorHandler(errorObject) {
     console.log(errorObject.message);
     /**
-     *
+     *code to create and active modal with the error message
      */
     alert(errorObject.message);
 }
@@ -138,18 +143,28 @@ function errorHandler(errorObject) {
  * @returns return >= 0 if current location is a waypoint, -1 otherwise
  */
 function isPredefined() {
+
+    var shortestDistance = 60;//if waypoints overlap, this will hold value of the closest
+    var index = -1;
+
+
     for (var i = 0; i < waypointsArr.length; i++) {
+
+
+        //if they are the same waypoints  stop the loop and set distance to 0
         if (waypointsArr[i].coords.lat == currentPos.lat && waypointsArr[i].coords.lng == currentPos.lng) {
-            return i
+            shortestDistance = 0;
+            index = i;
+            break;
         }
 
-        /**
-         * if the distance is <= 60 of a waypoint, return the closest waypoint by setting i to the value
-         *
-         */
-    
-    }
-    return -1;
+        //if the distance from waypoint is less than the shortest distance
+        if(getDistance(waypointsArr[i].coords, currentPos) <= shortestDistance){
+            shortestDistance = Math.min(getDistance(waypointsArr[i].coords, currentPos), shortestDistance);
+            index = i;
+        }
+
+    return index;
 }
 
 /**
