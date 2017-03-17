@@ -9,8 +9,9 @@ var lastPos = {
     lng: ""
 }; //last know coordinates
 var accuracy;
+var WAYPOINT_RADIUS = 60;
 //var map = new google.map();
-var siteLoader = document.getElementById("siteLoader");
+var SITE_LOADER = document.getElementById("siteLoader");
 var countTime = 0;
 var distance = getDistance(currentPos, lastPos);
 
@@ -18,10 +19,17 @@ var distance = getDistance(currentPos, lastPos);
  * Java still lives!!! say hello to the main method
  */
 function main() {
+    //get and set the current location
     getCurrentLocation();
+    //during program startup i.e @ countTime = 0, set the last position to current
+    if (countTime == 0) {
+        lastPos.lat = currentPos.lat;
+        lastPos.lng = currentPos.lng;
+    }
+
     console.log(countTime + "s");
     report();
-    countTime += 30;
+    countTime += 5;
 
     //wait two seconds before checking due to asynchronous processing
     var index = isPredefined();
@@ -31,22 +39,22 @@ function main() {
         lastPos.lat = waypointsArr[index].coords.lat;
         lastPos.lng = waypointsArr[index].coords.lng;
 
-        $(siteLoader).empty(); //remove current content of siteloader
+        $(SITE_LOADER).empty(); //remove current content of siteloader
 
         //create a new embed object with the location's url
         var embed = "<object data= " + waypointsArr[index].url + " frameborder='0'" +
             " style='overflow: hidden; height: 100%; width: 100%; position: absolute;' height='100%' width='100%'></object>";
         //insert into the page
-        $(siteLoader).html(embed);
+        $(SITE_LOADER).html(embed);
     } else {
 
         //if the program is just starting (last position is unknown) or the new position is +60m from the last, update the program
-        if(Math.round(getDistance(lastPos, currentPos)) > 60){
+        if (Math.round(getDistance(lastPos, currentPos)) > 60) {
             //update the current location to the current
             lastPos.lat = currentPos.lat;
             lastPos.lng = currentPos.lng;
             //clear the siteloader and load the new google maps object
-            $(siteLoader).empty();
+            $(SITE_LOADER).empty();
             initMap();
         }
 
@@ -61,7 +69,7 @@ function main() {
 function report() {
     console.log("Current position is lat: " + currentPos.lat + " and " + " lng: " + currentPos.lng + "\n" +
         "Last position is lat: " + lastPos.lat + " and " + " lng: " + lastPos.lng + "\n" +
-        "Accuracy is: " + accuracy + "\n" + "Distance: " + getDistance(currentPos, lastPos)
+        "Accuracy is: " + accuracy + "\n" + "Distance: " + distance
     );
 }
 
@@ -69,14 +77,14 @@ function report() {
  * create new google maps object and inserts into the page. Centered on the last known position
  */
 function initMap() {
-    $(siteLoader).html("<div id='mapBox'></div>");//create map container
+    $(SITE_LOADER).html("<div id='mapBox'></div>");//create map container
     var mapBox = document.getElementById("mapBox");
     //mapBox.setAttribute("id", "googleMap");
 
     var mapOptions = {
         zoom: 17,
         center: {lat: lastPos.lat, lng: lastPos.lng}
-    }
+    };
 
     //now insert the map
     var map = new google.maps.Map(mapBox, mapOptions);
@@ -108,11 +116,6 @@ function initMap() {
 function testDevice() {
     if (navigator.geolocation && navigator.onLine) {
         console.log("Device GPS active and connected to a network");
-        navigator.geolocation.getCurrentPosition(function (data) {
-            accuracy = data.coords.accuracy;
-            currentPos.lat = data.coords.lat;
-            currentPos.lng = data.coords.lng;
-        });
     } else {
         /*Throws error on fail no GPS device available*/
         console.log("Device is not supported or GPS feature is disabled\n" +
@@ -121,7 +124,6 @@ function testDevice() {
             "Please enable and refresh the page");
         error.name = "connectivity";
         errorHandler(error);
-        return false;
     }
 
 }
@@ -136,7 +138,7 @@ function errorHandler(errorObject) {
      *code to create and active modal with the error message
      */
     alert(errorObject.name + "\n\n" +
-    errorObject.message);
+        errorObject.message);
 }
 
 /**
@@ -144,28 +146,22 @@ function errorHandler(errorObject) {
  * @returns return >= 0 if current location is a waypoint, -1 otherwise
  */
 function isPredefined() {
-
-    var shortestDistance = 60;//if waypoints overlap, this will hold value of the closest
+    var shortestDistance = WAYPOINT_RADIUS;
     var index = -1;
-
 
     for (var i = 0; i < waypointsArr.length; i++) {
 
-
-        //if they are the same waypoints  stop the loop and set distance to 0
-        if (waypointsArr[i].coords.lat == currentPos.lat && waypointsArr[i].coords.lng == currentPos.lng) {
-            shortestDistance = 0;
-            index = i;
-            break;
+        //if the current position and waypoint are within range
+        if (withingRange(currentPos, waypointsArr[i].coords)) {
+            //if the wapoint is closer that a previous waypoing within range
+            if (Math.min(getDistance(waypointsArr[i].coords, currentPos), shortestDistance) < shortestDistance) {
+                shortestDistance = getDistance(waypointsArr[i].coords, currentPos);
+                index = i;
+            }
         }
 
-        //if the distance from waypoint is less than the shortest distance
-        if(getDistance(waypointsArr[i].coords, currentPos) <= shortestDistance){
-            shortestDistance = Math.min(getDistance(waypointsArr[i].coords, currentPos), shortestDistance);
-            index = i;
-        }
-
-    return index;
+        return index;
+    }
 }
 
 /**
@@ -206,4 +202,11 @@ function getDistance(cPos, lPos) {
         last = new google.maps.LatLng(cPos.lat, cPos.lng);
     }
     return google.maps.geometry.spherical.computeDistanceBetween(last, cur);
+}
+
+/**
+ *
+ */
+function withingRange(pos1, pos2) {
+    return Math.round(getDistance(pos1, pos2)) <= WAYPOINT_RADIUS;
 }
