@@ -1,0 +1,6 @@
+Created a fork of my university project to "make it better" now that I've gotten more experience. Making a few design changes to:
+1. Make it mobile friendly by adding jQuerymobile
+2. Less "time-based" and more "event-driven"
+3. Proper handling of situations like no location and no wifi
+4. Redesigning the GUI
+5. Adding more options like location form and to-do list
