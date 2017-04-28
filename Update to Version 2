@@ -4,3 +4,4 @@ Created a fork of my university project to "make it better" now that I've gotten
 3. Proper handling of situations like no location and no wifi
 4. Redesigning the GUI
 5. Adding more options like location form and to-do list
+6. Server JSON data accross a server to the app or resolve the issue of cross-domain origin error some other way
