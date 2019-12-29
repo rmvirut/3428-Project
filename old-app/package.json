@@ -1,0 +1,19 @@
+{
+  "name": "handsfree-navigator",
+  "version": "2.0.0",
+  "description": "Handsfree web app for live location tracking and route plotting",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rmvirut/handsfree-navigator.git"
+  },
+  "author": "Kojo Acquah",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rmvirut/handsfree-navigator/issues"
+  },
+  "homepage": "https://github.com/rmvirut/handsfree-navigator#readme"
+}

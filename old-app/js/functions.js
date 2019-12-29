@@ -41,7 +41,7 @@ function main() {
     } else {
 
         //if the program is just starting (last position is unknown) or the new position is +60m from the last, update the program
-        if(Math.round(getDistance(lastPos, currentPos)) > 60){
+        if (Math.round(getDistance(lastPos, currentPos)) > 60) {
             //update the current location to the current
             lastPos.lat = currentPos.lat;
             lastPos.lng = currentPos.lng;
@@ -69,14 +69,17 @@ function report() {
  * create new google maps object and inserts into the page. Centered on the last known position
  */
 function initMap() {
-    $(siteLoader).html("<div id='mapBox'></div>");//create map container
+    $(siteLoader).html("<div id='mapBox'></div>"); //create map container
     var mapBox = document.getElementById("mapBox");
     //mapBox.setAttribute("id", "googleMap");
 
     var mapOptions = {
         zoom: 17,
-        center: {lat: lastPos.lat, lng: lastPos.lng}
-    }
+        center: {
+            lat: lastPos.lat,
+            lng: lastPos.lng
+        }
+    };
 
     //now insert the map
     var map = new google.maps.Map(mapBox, mapOptions);
@@ -144,7 +147,7 @@ function errorHandler(errorObject) {
  */
 function isPredefined() {
 
-    var shortestDistance = 60;//if waypoints overlap, this will hold value of the closest
+    var shortestDistance = 60; //if waypoints overlap, this will hold value of the closest
     var index = -1;
 
 
@@ -159,50 +162,50 @@ function isPredefined() {
         }
 
         //if the distance from waypoint is less than the shortest distance
-        if(getDistance(waypointsArr[i].coords, currentPos) <= shortestDistance){
+        if (getDistance(waypointsArr[i].coords, currentPos) <= shortestDistance) {
             shortestDistance = Math.min(getDistance(waypointsArr[i].coords, currentPos), shortestDistance);
             index = i;
         }
 
-    return index;
-}
-
-/**
- * Function creates a navigator.geolocation object and obtains the devices location using getCurrentPosition
- * @returns returns the latitude and longitude positions of an object as an array
- */
-function getCurrentLocation() {
-    navigator.geolocation.getCurrentPosition(function (data) {
-        currentPos.lat = data.coords.latitude;
-        currentPos.lng = data.coords.longitude;
-        accuracy = data.coords.accuracy;
-    });
-}
-
-/**
- Finds distance between two points, using the google geometry library
- If lPos is not initialized, cPos will be used in its place.
-
- Params:
- cPos - an object with lat and lng fields
- lPos - an object with lat and lng fields
-
- Pre-conditions: cPos and lPos must be objects with lat and lng fields.
- These fields must be valid latitude and longitude values.
-
- Post-conditions: the distance between cPos and lPos is returned
-
- Returns: the distance, in metres, between cPos and lPos
- */
-function getDistance(cPos, lPos) {
-    //Convert cPos to a LatLng object
-    cur = new google.maps.LatLng(cPos.lat, cPos.lng);
-    //if lPos does not exist, use cPos to convert to a LatLng object
-    if (lPos.lat || lPos.lng) {
-        last = new google.maps.LatLng(lPos.lat, lPos.lng);
+        return index;
     }
-    else {
-        last = new google.maps.LatLng(cPos.lat, cPos.lng);
+
+    /**
+     * Function creates a navigator.geolocation object and obtains the devices location using getCurrentPosition
+     * @returns returns the latitude and longitude positions of an object as an array
+     */
+    function getCurrentLocation() {
+        navigator.geolocation.getCurrentPosition(function (data) {
+            currentPos.lat = data.coords.latitude;
+            currentPos.lng = data.coords.longitude;
+            accuracy = data.coords.accuracy;
+        });
     }
-    return google.maps.geometry.spherical.computeDistanceBetween(last, cur);
+
+    /**
+     Finds distance between two points, using the google geometry library
+     If lPos is not initialized, cPos will be used in its place.
+
+     Params:
+     cPos - an object with lat and lng fields
+     lPos - an object with lat and lng fields
+
+     Pre-conditions: cPos and lPos must be objects with lat and lng fields.
+     These fields must be valid latitude and longitude values.
+
+     Post-conditions: the distance between cPos and lPos is returned
+
+     Returns: the distance, in metres, between cPos and lPos
+     */
+    function getDistance(cPos, lPos) {
+        //Convert cPos to a LatLng object
+        cur = new google.maps.LatLng(cPos.lat, cPos.lng);
+        //if lPos does not exist, use cPos to convert to a LatLng object
+        if (lPos.lat || lPos.lng) {
+            last = new google.maps.LatLng(lPos.lat, lPos.lng);
+        } else {
+            last = new google.maps.LatLng(cPos.lat, cPos.lng);
+        }
+        return google.maps.geometry.spherical.computeDistanceBetween(last, cur);
+    }
 }
